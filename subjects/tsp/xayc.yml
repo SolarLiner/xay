@@ -1,0 +1,4 @@
+system-dependencies:
+  - cairo
+extra-link-flags:
+  - -lm
