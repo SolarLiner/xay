@@ -1,0 +1,24 @@
+site_name: xây
+site_url: https://solarliner.github.io/xay
+theme:
+  name: material
+  palette:
+    primary: purple
+    accent: deep orange
+  font:
+    text: Noto
+    code: Roboto Mono
+plugins:
+  - search
+markdown_extensions:
+  - smarty
+  - admonition
+  - codehilite
+nav:
+  - Home: index.md
+  - Changelog: changelog.md
+  - CLI Usage: cli.md
+  - Conventions: conventions.md
+  - Configuration: configuration.md
+  - Plugins: plugins.md
+  - API Reference: /docs/ref/
