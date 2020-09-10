@@ -19,6 +19,8 @@ nav:
   - Changelog: changelog.md
   - CLI Usage: cli.md
   - Conventions: conventions.md
-  - Configuration: configuration.md
-  - Plugins: plugins.md
+  - Xay for C:
+      - Getting started: C/getting-started.md
+      - Extra CLI options: C/cli.md
+      - Configuration: C/configuration.md
   - API Reference: /docs/ref/

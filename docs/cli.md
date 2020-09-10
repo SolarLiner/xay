@@ -1,13 +1,16 @@
 # CLI usage
 
-In the following section, replace `xay` by `Dung.CLI` if using binaries compiled from source.
+In the following section, replace `xay` by the appropriate binary name for your project.
+
+!!! note
+    There may be more options specialized for each language `xay` support.
 
 ## Global options
 
     <path>      Path to the project (default: current directory)
     <dest>      Destination folder of the built files (relative to project dir)
                 (default: "build")
-    -c --config Path to the configuration file (default: xayc.yml)
+    -c --config Path to the configuration file (default: xay.yml)
 
 ## `xay` or `xay generate`
 
