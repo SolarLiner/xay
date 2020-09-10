@@ -33,3 +33,6 @@ jobs:
       run: cargo build --release --verbose
     - name: Semantic release
       run: semantic-rs
+      env:
+        CARGO_TOKEN: ${{ secrets.CARGO_TOKEN }}
+
