@@ -16,7 +16,7 @@ jobs:
 
     steps:
     - name: System dependencies
-      run: sudo apt install pkg-config libssl-dev
+      run: sudo apt install pkg-config libssl-dev zlib1g-dev
     - name: Cache
       uses: actions/cache@v2.1.1
       with:
@@ -28,7 +28,7 @@ jobs:
     - name: Install Nightly
       run: rustup toolchain add nightly
     - name: Install semantic-rs
-      run: cargo +nightly install --verbose semantic-rs
+      run: cargo +nightly install --git https://github.com/etclabscore/semantic-rs --tag v2.12.1
     - name: Build
       run: cargo build --release --verbose
     - name: Semantic release
