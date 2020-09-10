@@ -1,0 +1,31 @@
+name: Release
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Cache
+      uses: actions/cache@v2.1.1
+      with:
+        # A list of files, directories, and wildcard patterns to cache and restore
+        path: target
+        # An explicit key for restoring and saving the cache
+        key: release
+    - uses: actions/checkout@v2
+    - name: Install semantic-rs
+      run: cargo +nightly install semantic-rs
+    - name: Build
+      run: cargo build --release --verbose
+    - name: Semantic release
+      run: semantic-rs
