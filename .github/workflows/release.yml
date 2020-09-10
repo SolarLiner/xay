@@ -23,6 +23,8 @@ jobs:
         # An explicit key for restoring and saving the cache
         key: release
     - uses: actions/checkout@v2
+    - name: Install Nightly
+      run: rustup toolchain add nightly
     - name: Install semantic-rs
       run: cargo +nightly install semantic-rs
     - name: Build
