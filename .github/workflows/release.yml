@@ -35,4 +35,6 @@ jobs:
       run: semantic-rs
       env:
         CARGO_TOKEN: ${{ secrets.CARGO_TOKEN }}
+        GIT_COMMITER_NAME: githubactions
+        GIT_COMMITER_EMAIL: actions@github.com
 
