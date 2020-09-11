@@ -7,18 +7,23 @@ env:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - name: Cache
-      uses: actions/cache@v2.1.1
-      with:
-        # A list of files, directories, and wildcard patterns to cache and restore
-        path: target
-        # An explicit key for restoring and saving the cache
-        key: rust-unit
-        # An ordered list of keys to use for restoring the cache if no cache hit occurred for key
-    - uses: actions/checkout@v2
-    - name: Run tests
-      run: cargo test --verbose
+      - name: Compilation cache
+        uses: actions/cache@v2.1.1
+        with:
+          # A list of files, directories, and wildcard patterns to cache and restore
+          path: target
+          # An explicit key for restoring and saving the cache
+          key: release-target
+      - name: Cargo cache
+        uses: actions/cache@v2.1.1
+        with:
+          # A list of files, directories, and wildcard patterns to cache and restore
+          path: ~/.cargo
+          # An explicit key for restoring and saving the cache
+          key: release-cargo
+      - uses: actions/checkout@v2
+      - name: Run tests
+        run: cargo test --verbose

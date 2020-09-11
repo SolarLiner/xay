@@ -2,39 +2,44 @@ name: Release
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 env:
   CARGO_TERM_COLOR: always
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - name: System dependencies
-      run: sudo apt install pkg-config libssl-dev zlib1g-dev
-    - name: Cache
-      uses: actions/cache@v2.1.1
-      with:
-        # A list of files, directories, and wildcard patterns to cache and restore
-        path: target
-        # An explicit key for restoring and saving the cache
-        key: release
-    - uses: actions/checkout@v2
-    - name: Install Nightly
-      run: rustup toolchain add nightly
-    - name: Install semantic-rs
-      run: cargo +nightly install --git https://github.com/etclabscore/semantic-rs --tag v2.12.1
-    - name: Build
-      run: cargo build --release --verbose
-    - name: Semantic release
-      run: semantic-rs
-      env:
-        CARGO_TOKEN: ${{ secrets.CARGO_TOKEN }}
-        GIT_COMMITTER_NAME: githubactions
-        GIT_COMMITTER_EMAIL: actions@github.com
-
+      - name: System dependencies
+        run: sudo apt install pkg-config libssl-dev zlib1g-dev
+      - name: Compilation cache
+        uses: actions/cache@v2.1.1
+        with:
+          # A list of files, directories, and wildcard patterns to cache and restore
+          path: target
+          # An explicit key for restoring and saving the cache
+          key: release-target
+      - name: Cargo cache
+        uses: actions/cache@v2.1.1
+        with:
+          # A list of files, directories, and wildcard patterns to cache and restore
+          path: ~/.cargo
+          # An explicit key for restoring and saving the cache
+          key: release-cargo
+      - uses: actions/checkout@v2
+      - name: Install Nightly
+        run: rustup toolchain add nightly
+      - name: Install semantic-rs
+        run: cargo +nightly install --git https://github.com/etclabscore/semantic-rs --tag v2.12.1
+      - name: Build
+        run: cargo build --release --verbose
+      - name: Semantic release
+        run: semantic-rs
+        env:
+          CARGO_TOKEN: ${{ secrets.CARGO_TOKEN }}
+          GIT_COMMITTER_NAME: githubactions
+          GIT_COMMITTER_EMAIL: actions@github.com
