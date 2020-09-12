@@ -1,0 +1,48 @@
+name: Docs
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: System dependencies
+        run: sudo apt install pkg-config libssl-dev zlib1g-dev
+      - name: Compilation cache
+        uses: actions/cache@v2.1.1
+        with:
+          # A list of files, directories, and wildcard patterns to cache and restore
+          path: target
+          # An explicit key for restoring and saving the cache
+          key: release-target
+      - name: Cargo cache
+        uses: actions/cache@v2.1.1
+        with:
+          # A list of files, directories, and wildcard patterns to cache and restore
+          path: ~/.cargo
+          # An explicit key for restoring and saving the cache
+          key: release-cargo
+      - uses: actions/checkout@v2
+      - name: Install python dependencies
+        run: pip3 install mkdocs mkdocs-material
+      - name: Build docs
+        run: mkdocs build docs-gen
+      - name: Build reference docs
+        run: >
+          cargo doc --no-deps --target-dir _refdoc
+          mv _refdoc/doc docs-gen/reference
+      - name: Deploy to GitHub Pages
+        if: success()
+        uses: crazy-max/ghaction-github-pages@v2
+        with:
+          target_branch: gh-pages
+          build_dir: docs-gen
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

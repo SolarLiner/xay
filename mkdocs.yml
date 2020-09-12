@@ -23,4 +23,4 @@ nav:
       - Getting started: C/getting-started.md
       - Extra CLI options: C/cli.md
       - Configuration: C/configuration.md
-  - API Reference: /docs/ref/
+  - API Reference: /reference/xay
