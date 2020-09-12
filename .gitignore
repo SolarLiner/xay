@@ -2,3 +2,6 @@
 
 /target
 /subjects/**/build
+
+# IDEA
+/.idea
