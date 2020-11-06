@@ -15,3 +15,5 @@ commit = "git"
 [cfg.clog]
 ignore = ["ci"]
 
+[cfg.git]
+force_https = true
