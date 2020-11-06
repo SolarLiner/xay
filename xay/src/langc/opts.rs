@@ -6,9 +6,12 @@ use serde::Deserialize;
 #[serde(deny_unknown_fields, rename_all = "kebab-case")]
 pub struct BuildOptionsFile {
     name: Option<String>,
-    system_dependencies: Option<Vec<String>>,
-    extra_build_flags: Option<Vec<String>>,
-    extra_link_flags: Option<Vec<String>>,
+    #[serde(default)]
+    system_dependencies: Vec<String>,
+    #[serde(default)]
+    extra_build_flags: Vec<String>,
+    #[serde(default)]
+    extra_link_flags: Vec<String>,
 }
 
 #[derive(Clone, Debug)]
@@ -31,9 +34,9 @@ impl BuildOptions {
     pub fn from_file(opts: BuildOptionsFile, default_name: String) -> Self {
         Self {
             name: opts.name.unwrap_or(default_name),
-            system_dependencies: opts.system_dependencies.unwrap_or(vec![]),
-            extra_build_flags: opts.extra_build_flags.unwrap_or(vec![]),
-            extra_link_flags: opts.extra_link_flags.unwrap_or(vec![]),
+            system_dependencies: opts.system_dependencies,
+            extra_build_flags: opts.extra_build_flags,
+            extra_link_flags: opts.extra_link_flags,
         }
     }
 }

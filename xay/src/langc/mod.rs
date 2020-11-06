@@ -4,6 +4,8 @@ mod pkgconfig;
 use pkgconfig::PkgConfig;
 use std::{ffi::OsStr, path::PathBuf};
 
+use crate::langc::opts::{BuildOptions, BuildOptionsFile, ProcessOptions};
+use crate::Context;
 use ninja::NinjaAst;
 
 macro_rules! map(
@@ -19,7 +21,7 @@ macro_rules! map(
 );
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct Source(pub PathBuf);
+struct Source(pub PathBuf);
 
 impl Into<NinjaAst> for Source {
     fn into(self) -> NinjaAst {
@@ -28,7 +30,7 @@ impl Into<NinjaAst> for Source {
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct Object {
+struct Object {
     pub name: String,
     pub source: Source,
     pub flags: Vec<String>,
@@ -58,13 +60,13 @@ impl Object {
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub enum Sharedness {
+enum Sharedness {
     Static,
     Shared,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct Library {
+struct Library {
     pub name: String,
     pub sharedness: Sharedness,
     pub objects: Vec<Object>,
@@ -114,7 +116,7 @@ impl Library {
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct Executable {
+struct Executable {
     pub sharedness: Sharedness,
     pub name: String,
     pub objects: Vec<Object>,
@@ -145,7 +147,7 @@ impl Into<NinjaAst> for Executable {
     }
 }
 
-pub fn get_build_ast(opts: opts::ProcessOptions) -> std::io::Result<NinjaAst> {
+fn get_build_ast(opts: opts::ProcessOptions) -> std::io::Result<NinjaAst> {
     let dependencies = opts
         .build_opts
         .system_dependencies
@@ -214,6 +216,14 @@ pub fn get_build_ast(opts: opts::ProcessOptions) -> std::io::Result<NinjaAst> {
     };
 
     Ok(NinjaAst::Default(Box::new(exe.into())))
+}
+
+pub fn handle_c_project(ctx: Context<BuildOptionsFile>) -> anyhow::Result<NinjaAst> {
+    Ok(get_build_ast(ProcessOptions {
+        build_opts: BuildOptions::from_file(ctx.inner, ctx.name),
+        src_dir: ctx.src_dir,
+        dest_dir: ctx.dest_dir,
+    })?)
 }
 
 fn build_rule() -> ninja::Rule {
