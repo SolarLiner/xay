@@ -31,7 +31,7 @@ jobs:
           key: release-cargo
       - uses: actions/checkout@v2
       - name: "Install python packages' build dependencies"
-        run: pip3 install setuptools wheels
+        run: pip3 install setuptools wheel
       - name: Install python dependencies
         run: pip3 install mkdocs mkdocs-material
       - name: Build docs
