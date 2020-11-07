@@ -1,6 +1,5 @@
-use crate::langc::opts::BuildOptionsFile;
+use crate::clike::opts::BuildOptionsFile;
 use serde::Deserialize;
-use std::collections::HashMap;
 
 #[derive(Clone, Debug, Deserialize)]
 #[serde(tag = "language")]
@@ -10,4 +9,9 @@ pub enum Configuration {
         #[serde(flatten)]
         opts: BuildOptionsFile,
     },
+    #[serde(rename="c++")]
+    CPP {
+        #[serde(flatten)]
+        opts: BuildOptionsFile,
+    }
 }

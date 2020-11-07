@@ -2,7 +2,8 @@ use ninja::{NinjaAst, Writer};
 use std::fs::File;
 use std::{fmt::Display, path::PathBuf};
 use structopt::StructOpt;
-use xay::{config::Configuration, langc, Context};
+use xay::{config::Configuration, clike::{langc, langcpp}, Context};
+use std::process::{ExitStatus, exit};
 
 #[derive(Copy, Clone, Debug, Eq, PartialEq, StructOpt)]
 #[structopt()]
@@ -75,7 +76,8 @@ fn main() -> anyhow::Result<()> {
     let ast = match serde_yaml::from_reader::<_, Configuration>(
         File::open(&config_path).map_err(display_prefix("Config file"))?,
     ) {
-        Ok(Configuration::C { opts }) => langc::handle_c_project(ctx.clone().map_inner(|_| opts)),
+        Ok(Configuration::C { opts }) => langc::handle_project(ctx.clone().map_inner(|_| opts)),
+        Ok(Configuration::CPP { opts }) => langcpp::handle_project(ctx.clone().map_inner(|_| opts)),
         Err(err) => Err(err.into()),
     }?;
     let mut writer = Writer::default();
@@ -91,31 +93,36 @@ fn main() -> anyhow::Result<()> {
             println!("Wrote output to {}", ctx.dest_dir.display());
         }
         Some(Command::Build) => {
-            run(
+            let res = run(
                 "ninja",
                 vec!["-C".to_owned(), display(ctx.dest_dir.display())],
             )
             .map_err(display_prefix("ninja"))?;
+            exit(res.code().unwrap_or(0));
         }
         Some(Command::Run) => {
-            run(
+            let res = run(
                 "ninja",
                 vec!["-C".to_owned(), display(ctx.dest_dir.display())],
             )
             .map_err(display_prefix("ninja"))?;
-            let tgt_file = ctx.dest_dir.join(ctx.name);
-            println!();
-            run(tgt_file.clone().clone().to_string_lossy(), vec![])
-                .map_err(display_prefix(display(tgt_file.display())))?;
+            if let Some(0) = res.code() {
+                let tgt_file = ctx.dest_dir.join(ctx.name);
+                println!();
+                let res = run(tgt_file.clone().clone().to_string_lossy(), vec![])
+                    .map_err(display_prefix(display(tgt_file.display())))?;
+                exit(res.code().unwrap_or(0));
+            } else {
+                exit(res.code().unwrap_or(0));
+            }
         }
     }
     Ok(())
 }
 
-fn run<S: Into<String>, I: IntoIterator<Item = String>>(cmd: S, args: I) -> std::io::Result<()> {
+fn run<S: Into<String>, I: IntoIterator<Item = String>>(cmd: S, args: I) -> std::io::Result<ExitStatus> {
     let mut child = std::process::Command::new(cmd.into()).args(args).spawn()?;
-    child.wait()?;
-    Ok(())
+    child.wait()
 }
 /*
 fn do_pipe<R: Read, W: Write>(child: &mut R, parent: &mut W) -> std::io::Result<bool> {
