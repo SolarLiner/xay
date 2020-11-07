@@ -48,26 +48,15 @@ struct CmdArgs {
 fn main() -> anyhow::Result<()> {
     let opt: CmdArgs = CmdArgs::from_args();
 
-    let cwd = std::env::current_dir()?;
-    let base_dir = cwd.join(opt.path);
-    let src_dir = base_dir.join("src");
-    let dest_dir = base_dir.join(opt.dest);
-    let config_path = base_dir.join(opt.config);
-    let ninja_path = dest_dir.join("build.ninja");
-    let name = base_dir.file_name().unwrap().to_string_lossy().into();
-
-    let ctx = Context {
-        name,
-        cwd,
-        src_dir,
-        dest_dir,
-        inner: (),
-    };
+    let mut ctx = Context::new(std::env::current_dir()?.join(opt.path));
+    ctx.dest_dir = ctx.src_dir.join(opt.dest);
+    let config_path = ctx.cwd.join(ctx.cwd.join(opt.config));
+    let ninja_path = ctx.dest_dir.join("build.ninja");
 
     if !ctx.src_dir.exists() {
         return Err(anyhow::anyhow!(
-            "Folder does not have a src folder: {}",
-            base_dir.display()
+            "Source folder does not exist: {}",
+            ctx.src_dir.display()
         ));
     }
 
@@ -83,10 +72,10 @@ fn main() -> anyhow::Result<()> {
     let mut writer = Writer::default();
     writer.add_ast(ast);
     let mut ninja = std::fs::File::create(&ninja_path)
-        .map_err(display_prefix(display(ninja_path.display())))?;
+        .map_err(display_prefix(ninja_path.display().to_string()))?;
     writer
         .write_file(&mut ninja, 80)
-        .map_err(display_prefix(display(ninja_path.display())))?;
+        .map_err(display_prefix(ninja_path.display().to_string()))?;
 
     match opt.cmd {
         None | Some(Command::Generate) => {
@@ -95,7 +84,7 @@ fn main() -> anyhow::Result<()> {
         Some(Command::Build) => {
             let res = run(
                 "ninja",
-                vec!["-C".to_owned(), display(ctx.dest_dir.display())],
+                vec!["-C".to_owned(), ctx.dest_dir.display().to_string()],
             )
             .map_err(display_prefix("ninja"))?;
             exit(res.code().unwrap_or(0));
@@ -103,14 +92,14 @@ fn main() -> anyhow::Result<()> {
         Some(Command::Run) => {
             let res = run(
                 "ninja",
-                vec!["-C".to_owned(), display(ctx.dest_dir.display())],
+                vec!["-C".to_owned(), ctx.dest_dir.display().to_string()],
             )
             .map_err(display_prefix("ninja"))?;
             if let Some(0) = res.code() {
                 let tgt_file = ctx.dest_dir.join(ctx.name);
                 println!();
                 let res = run(tgt_file.clone().clone().to_string_lossy(), vec![])
-                    .map_err(display_prefix(display(tgt_file.display())))?;
+                    .map_err(display_prefix(tgt_file.display().to_string()))?;
                 exit(res.code().unwrap_or(0));
             } else {
                 exit(res.code().unwrap_or(0));
@@ -123,21 +112,6 @@ fn main() -> anyhow::Result<()> {
 fn run<S: Into<String>, I: IntoIterator<Item = String>>(cmd: S, args: I) -> std::io::Result<ExitStatus> {
     let mut child = std::process::Command::new(cmd.into()).args(args).spawn()?;
     child.wait()
-}
-/*
-fn do_pipe<R: Read, W: Write>(child: &mut R, parent: &mut W) -> std::io::Result<bool> {
-    let mut buf = vec![];
-    match child.read(&mut buf)? {
-        0 => Ok(true),
-        len => {
-            parent.write_all(&mut buf[..len])?;
-            Ok(false)
-        }
-    }
-} */
-
-fn display<T: Display>(value: T) -> String {
-    format!("{}", value)
 }
 
 fn display_prefix<S: Into<String>, T: Display>(prefix: S) -> impl (FnOnce(T) -> anyhow::Error) {

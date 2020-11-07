@@ -28,6 +28,21 @@ impl<T> DerefMut for Context<T> {
     }
 }
 
+impl Context<()> {
+    pub fn new(cwd: PathBuf) -> Self {
+        let name = cwd.file_name().unwrap().to_string_lossy().into_owned();
+        let src_dir = cwd.join("src");
+        let dest_dir = cwd.join("build");
+        Self {
+            name,
+            cwd,
+            src_dir,
+            dest_dir,
+            inner: ()
+        }
+    }
+}
+
 impl<T> Context<T> {
     pub fn map_inner<U, F: FnOnce(T) -> U>(self, f: F) -> Context<U> {
         let Context {
