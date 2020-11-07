@@ -13,7 +13,8 @@ enum Command {
     #[structopt(about = "Generate the build files and build the project")]
     Build,
     #[structopt(
-        about = "Generate the build files, build the project and run the executable (implies executable mode)"
+        about = "Generate the build files, build the project and run the executable (implies artifact\
+        is executable)"
     )]
     Run,
 }
