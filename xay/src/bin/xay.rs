@@ -32,11 +32,15 @@ impl Default for Command {
 struct CmdArgs {
     #[structopt(subcommand)]
     cmd: Option<Command>,
-    #[structopt(default_value = ".", parse(from_os_str))]
+    /// Sets the project folder
+    #[structopt(default_value = ".", short = "C", parse(from_os_str))]
     path: PathBuf,
-    #[structopt(default_value = "build")]
+    /// Sets the destination folder, the path to the build artifacts
+    #[structopt(default_value = "build", short, long)]
     dest: PathBuf,
-    #[structopt(short, long, default_value = "xay.yml")]
+    /// Sets the path to the configuration file, for cases where the file name might be non-standard
+    /// or that the project has several configuration files
+    #[structopt(long, default_value = "xay.yml")]
     config: String,
 }
 
