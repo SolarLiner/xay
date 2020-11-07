@@ -30,8 +30,8 @@ jobs:
           # An explicit key for restoring and saving the cache
           key: release-cargo
       - uses: actions/checkout@v2
-      - name: Upgrade virtualenv
-        run: pip3 install virtualenv>=20.0.2
+      - name: Install setuptools
+        run: pip3 install setuptools
       - name: Install python dependencies
         run: pip3 install mkdocs mkdocs-material
       - name: Build docs
