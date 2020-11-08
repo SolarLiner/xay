@@ -1,4 +1,4 @@
-# Project configuration (for C)
+# Project configuration (for C++)
 
 ## `name`
 

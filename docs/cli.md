@@ -1,16 +1,29 @@
 # CLI usage
 
-In the following section, replace `xay` by the appropriate binary name for your project.
-
 !!! note
     There may be more options specialized for each language `xay` support.
 
 ## Global options
 
-    <path>      Path to the project (default: current directory)
-    <dest>      Destination folder of the built files (relative to project dir)
-                (default: "build")
-    -c --config Path to the configuration file (default: xay.yml)
+    USAGE:
+        xay [OPTIONS] [SUBCOMMAND]
+    
+    FLAGS:
+        -h, --help       Prints help information
+        -V, --version    Prints version information
+    
+    OPTIONS:
+            --config <config>    Sets the path to the configuration file, for cases where the file name might be non-
+                                 standard or that the project has several configuration files [default: xay.yml]
+        -d, --dest <dest>        Sets the destination folder, the path to the build artifacts [default: build]
+        -C <path>                Sets the project folder [default: .]
+    
+    SUBCOMMANDS:
+        build       Generate the build files and build the project
+        generate    Generate the build directory for ninja to build the project
+        help        Prints this message or the help of the given subcommand(s)
+        run         Generate the build files, build the project and run the executable (implies artifactis executable)
+
 
 ## `xay` or `xay generate`
 

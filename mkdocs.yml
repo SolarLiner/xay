@@ -20,7 +20,10 @@ nav:
   - CLI Usage: cli.md
   - Conventions: conventions.md
   - Xay for C:
-      - Getting started: C/getting-started.md
-      - Extra CLI options: C/cli.md
-      - Configuration: C/configuration.md
-  - API Reference: /reference/xay
+    - Getting started: C/getting-started.md
+    - Extra CLI options: C/cli.md
+    - Configuration: C/configuration.md
+  - Xay for C++:
+    - Getting started: C++/getting-started.md
+    - Extra CLI options: C++/cli.md
+    - Configuration: C++/configuration.md

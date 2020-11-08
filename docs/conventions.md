@@ -34,11 +34,11 @@ directory structure will be as follows:
     - foo/
       - src/
         - main.c
-      - mod/
+      - lib/
         - libfoo/
           - include/   # Plugins can add supported directories, such as an include directory for C projects
             - foo.h
-          - libs/
+          - lib/
             - <indirect dependencies>
           - src/
             - foo.c

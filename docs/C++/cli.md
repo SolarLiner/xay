@@ -1,11 +1,11 @@
-# CLI options specific to C projects
+# CLI options specific to C++ projects
 
-## The `CC` environment variable
+## The `CXX` environment variable
 
 `xay` only supports `gcc` and `clang` at the moment. Other compilers may be added
 in the future.
 
-The `CC` variable, if present, changes the compiler used. The default is to use
+The `CXX` variable, if present, changes the compiler used. The default is to use
 `gcc` first, then trying for `clang`.
 
 ## The `LD` environment variable

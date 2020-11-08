@@ -1,4 +1,4 @@
-# Getting started (C Projects)
+# Getting started (C++ Projects)
 
 xây doesn't require any dependencies to execute, but needs `ninja` to actually perform the build.
 
@@ -9,7 +9,7 @@ xây doesn't require any dependencies to execute, but needs `ninja` to actually 
 1. If you have source code dependencies, add them to the `lib` folder.
 1. If you have system dependencies, add them to `xay.yml` as follows:
 ```yaml
-language: c
+language: cpp
 system-dependencies:
   - <dependency>
   - <dependency>
