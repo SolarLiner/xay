@@ -1,5 +1,7 @@
 [workspace]
 members = [
     "ninja",
+    "mapset_macros",
     "xay",
+    "xay_graph",
 ]

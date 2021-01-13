@@ -7,6 +7,8 @@ use super::pretty::{
     Pretty,
 };
 use pretty::{DocAllocator, DocBuilder};
+use std::hash::{Hash, Hasher};
+
 #[derive(Clone, Debug)]
 pub struct Rule {
     pub(crate) name: String,
@@ -28,6 +30,12 @@ impl PartialEq<String> for Rule {
 }
 
 impl Eq for Rule {}
+
+impl Hash for Rule {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        self.name.hash(state)
+    }
+}
 
 impl Pretty<Annotation> for Rule {
     fn pretty<'a, D>(&self, allocator: &'a D) -> DocBuilder<'a, D, Annotation>

@@ -10,6 +10,8 @@ use crate::{
     blocks::Rule,
     pretty::{Annotation, Pretty},
 };
+use crate::graph::{Node, DependencyGraph};
+use daggy::Dag;
 
 pub struct Writer<'a> {
     written_rules: HashSet<String>,
@@ -91,6 +93,31 @@ impl<'a> Writer<'a> {
                 let name = self.add_ast(*inner).unwrap();
                 self.add_default(name);
                 None
+            }
+        }
+    }
+
+    pub fn add_graph(&mut self, graph: &DependencyGraph) {
+        for rule in graph.rules() {
+            self.add_rule(rule);
+        }
+
+        for nctx in graph.nodes_dependencies() {
+            match nctx.node.clone() {
+                Node::Source(_) => {},
+                Node::Generated {
+                    rule,
+                    outputs,
+                    vars,
+                } => {
+                    let build = Build {
+                        vars,
+                        rule: rule.name,
+                        inputs: nctx.outgoing.iter().flat_map(|n| n.files().into_iter()).map(|f| f.to_string()).collect(),
+                        outputs: outputs.into_iter().collect(),
+                    };
+                    self.add_build(&build);
+                }
             }
         }
     }
